@@ -1,0 +1,72 @@
+version: "2"
+services:
+
+  sample_nginx:
+    image:
+      nginx:1.13
+    ports:
+      - 80:80
+    container_name:
+      sample_nginx
+    depends_on:
+      - sample_app
+    volumes:
+      - ./configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./configs/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./volumes/nginx/log:/var/log/nginx:rw
+
+  sample_app:
+    image:
+      sample/app 
+    build:
+      build/app
+    container_name:
+      sample_app
+    ports:
+      - 9999:9999
+    depends_on:
+      - sample_mysql
+      - sample_redis
+    environment:
+      APP_ENV:
+        local
+    volumes:
+      - ./project:/home/docker/project:ro
+#     - ./volumes/app/log:/var/log/app:rw
+
+  sample_mysql:
+    image:
+      mysql:5.7
+    container_name:
+      sample_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=sample
+      - MYSQL_PASSWORD=sample
+    volumes:
+      - ./configs/mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./configs/mysql/initdb.d:/docker-entrypoint-initdb.d:ro
+#     - ./volumes/mysql/data:/var/lib/mysql:rw
+#     - ./volumes/mysql/log:/var/log/mysql:rw
+
+  sample_redis:
+    image:
+      redis:4
+    container_name:
+      sample_redis
+    volumes:
+      - ./volumes/redis/log:/var/log/redis:rw
+#     - ./volumes/redis/data:/var/lib/redis:rw
+
+  sample_myadmin:
+    image:
+      phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    depends_on:
+      - sample_mysql
+    links:
+      - sample_mysql:db
+    container_name:
+      sample_myadmin
+
