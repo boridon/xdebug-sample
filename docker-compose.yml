@@ -22,12 +22,12 @@ services:
       build/app
     container_name:
       sample_app
-    ports:
-      - 9999:9999
     depends_on:
       - sample_mysql
       - sample_redis
     environment:
+      HOST_HOSTNAME:
+        ${HOSTNAME}
       APP_ENV:
         local
     volumes:
