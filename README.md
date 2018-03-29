@@ -1,4 +1,3 @@
 
 usage:
-
-`$ HOSTNAME=${HOSTNAME} docker-compose up 
+    $ HOSTNAME=${HOSTNAME} docker-compose up 
